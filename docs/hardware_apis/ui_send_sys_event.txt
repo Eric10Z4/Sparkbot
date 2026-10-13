@@ -1,0 +1,30 @@
+表情切换接口已定位：
+
+文件：
+example/factory_demo_v1/main/ui/ui.h
+example/factory_demo_v1/main/ui/ui.c
+example/factory_demo_v1/main/app/app_audio_record.c
+
+关键对象：
+extern lv_obj_t *ui_face;
+
+关键函数：
+void ui_send_sys_event(lv_obj_t *obj, lv_event_code_t event_code, void *user_data);
+
+已发现表情事件：
+LV_EVENT_FACE_LOOK
+LV_EVENT_FACE_ASK
+LV_EVENT_FACE_THINK
+LV_EVENT_FACE_SPEAK
+
+典型调用：
+ui_send_sys_event(ui_face, LV_EVENT_FACE_SPEAK, NULL);
+
+结论：
+Face UI 已经封装好，后续 WebSocket 收到 set_face 指令后，只需要根据 data 字段映射到对应事件即可。
+
+映射建议：
+look  -> LV_EVENT_FACE_LOOK
+ask   -> LV_EVENT_FACE_ASK
+think -> LV_EVENT_FACE_THINK
+speak -> LV_EVENT_FACE_SPEAK

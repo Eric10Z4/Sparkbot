@@ -1,0 +1,21 @@
+电量读取接口已定位：
+
+文件：
+example/factory_demo_v1/main/app/app_power.c
+example/factory_demo_v1/main/app/app_power.h
+
+函数原型：
+int get_power_value(void);
+
+返回值：
+返回 0-100 的电量百分比，类型为 int。
+
+内部逻辑：
+如果 adc_battery_estimation_handle 已初始化，则调用 adc_battery_estimation_get_capacity() 获取电池容量百分比；
+否则通过 get_power_voltage() 读取电压，再根据 POWER_VOLT_FULL 和 POWER_VOLT_EMPTY 进行线性换算。
+
+调用示例：
+example/factory_demo_v1/main/app/app_animation.c 中已有 get_power_value() 调用，用于显示电量文本。
+
+WebSocket 对接方式：
+后续状态上传任务中可以定时调用 get_power_value()，将结果作为 battery 字段发给 A 的服务器。

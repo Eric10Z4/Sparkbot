@@ -1,0 +1,60 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 测试音频图片
+*.wav
+*.mp3
+captured_images/
+captured_audio/
+debug_last_speak.wav
+
+# 底库数据
+face_db/
+
+# 模型权重文件
+models/*.pt
+models/*.onnx
+
+# OpenClaw 运行时日志和记忆
+openclaw/workspace/memory/
+openclaw/workspace/logs/
+
+# IDE/系统
+.vscode/
+.idea/
+*.lnk
+.DS_Store
+
+# ESP32 Firmware
+factory_demo_v1/build/
+factory_demo_v1/managed_components/
+
+# Visual Engine
+view/.venv/
+view/.idea/
+view/yolov8n.pt
+view/captured_images/
+
+# Private local settings
+.env
+.env.*
+!.env.example
+factory_demo_v1/sdkconfig
+factory_demo_v1/sdkconfig.old
+
+# Personal visual data and generated reports
+view/tests/test_images/*
+view/tests/visual_assets/face_*
+view/tests/visual_assets/scene_gen_*
+view/CV_ASSET_TEST_REPORT.md
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+openclaw/*.local.json
+openclaw/workspace/.dreams/
+
+.venv/

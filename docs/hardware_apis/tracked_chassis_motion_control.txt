@@ -1,0 +1,46 @@
+履带底盘接口已定位：
+
+相关文件：
+example/tank/sparkbot_motion_control/tracked_chassis_control.c
+example/tank/sparkbot_motion_control/tracked_chassis_control.h
+example/tank/sparkbot_motion_control/main/app_sr_handler.c
+
+初始化函数：
+tracked_chassis_control_start();
+
+说明：
+内部调用 echo_uart_init() 初始化底盘 UART，使用底盘控制前需要先调用。
+
+运动控制函数：
+tracked_chassis_motion_control(const char *command_str);
+
+方向映射：
+forward  -> "*0.0y1.0"
+backward -> "*0.0y-1.0"
+left     -> "*-1.0y0.0"
+right    -> "*1.0y0.0"
+stop     -> "*0.0y0.0"
+
+跳舞模式函数：
+tracked_chassis_set_dance_mode(uint8_t dance_mode);
+
+底层逻辑：
+dance_mode 会被拼成 "d%d" 字符串，通过 uart_write_bytes() 发给底盘。
+例如 tracked_chassis_set_dance_mode(1) 会发送 "d1"。
+
+RGB 灯函数：
+tracked_chassis_rgb_light_control(uint8_t rgb_mode);
+
+底层逻辑：
+rgb_mode 会被拼成 "v%d" 字符串，通过 UART 发给底盘。
+
+后续 WebSocket 对接方式：
+收到 {"type":"move","data":"forward"} 后，调用 tracked_chassis_motion_control("*0.0y1.0");
+收到 {"type":"move","data":"backward"} 后，调用 tracked_chassis_motion_control("*0.0y-1.0");
+收到 {"type":"move","data":"left"} 后，调用 tracked_chassis_motion_control("*-1.0y0.0");
+收到 {"type":"move","data":"right"} 后，调用 tracked_chassis_motion_control("*1.0y0.0");
+收到 {"type":"move","data":"stop"} 后，调用 tracked_chassis_motion_control("*0.0y0.0");
+收到 {"type":"dance","data":1} 后，调用 tracked_chassis_set_dance_mode(1);
+
+注意：
+底盘模块目前在 example/tank 中，不在 factory_demo_v1 主工程内。后续需要把 tracked_chassis_control.c/.h 以及 UART 依赖合并到 factory_demo_v1。

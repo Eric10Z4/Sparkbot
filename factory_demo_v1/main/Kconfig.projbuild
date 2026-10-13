@@ -1,0 +1,45 @@
+menu "Example Configuration"
+
+    config BAIDU_AUDIO_ACCESS_TOKEN
+        string "BAIDU AUDIO ACCESS TOKEN"
+        default "token"
+        help
+            ACCESS TOKEN for tts and stt
+
+    config BAIDU_LLM_ACCESS_TOKEN
+        string "BAIDU LLM ACCESS TOKEN"
+        default "token"
+        help
+            ACCESS TOKEN for baidu LLM
+
+    config QWEATHER_REQUEST_KEY
+        string "QWEATHER REQUEST KEY"
+        default "key"
+        help
+            Get weather information from Qweatehr server
+
+    config EXAMPLE_WIFI_SSID
+        string "SSID"
+        default ""
+        help
+            SSID of the WiFi network to connect to
+
+    config EXAMPLE_WIFI_PASSWORD
+        string "Password"
+        default ""
+        help
+            Password of the WiFi network to connect to
+
+    config SPARKBOT_WS_URI
+        string "Authenticated robot WebSocket URL"
+        default "ws://127.0.0.1:8765"
+        help
+            Set the server LAN address locally. Use an isolated LAN or TLS tunnel.
+
+    config SPARKBOT_DEVICE_TOKEN
+        string "Device bearer token (private)"
+        default ""
+        help
+            Must match the server SPARKBOT_DEVICE_TOKEN. Never commit sdkconfig.
+
+endmenu

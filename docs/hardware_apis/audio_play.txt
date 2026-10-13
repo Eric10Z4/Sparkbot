@@ -1,0 +1,35 @@
+esp_err_t audio_play(uint8_t *wav, size_t len)
+{
+    audio_data_t audio_data = {
+        .len = len,
+        .wav = heap_caps_malloc(len, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT),
+    };
+
+    if (audio_data.wav == NULL) {
+        ESP_LOGE(TAG, "heap_caps_malloc failed");
+        return ESP_OK;
+    }
+
+    memcpy(audio_data.wav, wav, len);
+
+    xQueueSend(g_queue_audio_play, &audio_data, portMAX_DELAY);
+    return ESP_OK;
+}
+
+音频播放接口 audio_play 已定位。
+
+文件：
+example/factory_demo_v1/main/app/app_audio_record.c
+
+函数原型：
+esp_err_t audio_play(uint8_t *wav, size_t len)
+
+播放流程：
+audio_play() 将传入音频复制到 PSRAM，然后通过 g_queue_audio_play 队列交给播放任务。播放任务最终调用 esp_codec_dev_write(spk_codec_dev, audio_data.wav, audio_data.len) 输出到喇叭。
+
+音频参数：
+spk_codec_dev 使用 16000Hz、单声道、16bit 打开，因此建议电脑端发送 PCM S16LE 16000Hz mono 音频数据。
+
+头文件情况：
+目前在 factory_demo_v1 中只搜到 app_audio_record.c 里的函数定义，暂未找到 .h 文件中的 audio_play() 声明。后续如果 WebSocket 模块需要跨文件调用 audio_play()，需要在 app_audio_record.h 或对应公共头文件中补充声明：
+esp_err_t audio_play(uint8_t *wav, size_t len);

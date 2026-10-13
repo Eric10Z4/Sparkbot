@@ -1,0 +1,43 @@
+录音采集接口已定位：
+
+相关文件：
+example/factory_demo_v1/main/app/app_audio_record.c
+
+关键变量：
+int16_t *g_audio_record_buf = NULL;
+g_stt_recorded_length：当前录音长度，单位是字节
+g_voice_recording：是否正在录音
+
+录音缓存初始化：
+g_audio_record_buf = heap_caps_malloc(MAX_AUDIO_INPUT_LENGTH + 1,
+                                      MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+
+录音写入逻辑：
+audio_feed_task 中通过 esp_codec_dev_read() 从 mic_codec_dev 读取音频数据到 audio_buffer。
+当 g_voice_recording == true 时，将 audio_buffer 写入 g_audio_record_buf：
+
+memcpy(g_audio_record_buf + g_stt_recorded_length / 2,
+       audio_buffer,
+       bytes_to_write);
+
+随后更新：
+g_stt_recorded_length += bytes_to_write;
+
+录音触发逻辑：
+audio_record_task 中：
+AUDIO_VAD_START：设置 g_voice_recording = true，开始录音。
+AUDIO_VAD_END：设置 g_voice_recording = false。
+如果 g_stt_recorded_length > MIN_AUDIO_INPUT_LENGTH，则触发：
+xEventGroupSetBits(g_stt_event_group, AUDIO_CHAT_BIT);
+
+发送逻辑：
+app_st_task 等待 AUDIO_CHAT_BIT。
+事件触发后，原代码调用：
+baidu_asr_send_audio(g_audio_record_buf, g_stt_recorded_length, g_stt_recorded_length);
+
+后续改造方向：
+保留现有 VAD 和录音缓存流程，把 baidu_asr_send_audio(...) 替换为 WebSocket 上传函数：
+ws_send_audio((uint8_t *)g_audio_record_buf, g_stt_recorded_length);
+
+音频格式结论：
+录音数据为 16bit PCM 原始音频，结合 codec 配置判断为 16000Hz / 单声道 / 16bit PCM。

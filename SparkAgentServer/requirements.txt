@@ -1,0 +1,18 @@
+fastapi
+uvicorn
+websockets
+edge-tts
+dashscope
+requests
+httpx
+pydub
+opencv-python
+numpy
+certifi
+
+# 下面为本地GPU需要依赖，按需安装 (USE_LOCAL_GPU=True)
+# funasr
+# modelscope
+# insightface
+# ultralytics
+# onnxruntime

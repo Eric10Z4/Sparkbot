@@ -1,0 +1,34 @@
+IMU / 姿态接口已定位：
+
+相关文件：
+example/factory_demo_v1/main/app/app_imu.c
+example/factory_demo_v1/main/app/app_datafusion.c
+example/factory_demo_v1/main/app/app_datafusion.h
+
+核心计算函数：
+calculateAttitude(..., bmi270_axis_t *axis_val)
+
+计算结果：
+calculateAttitude() 会把当前姿态写入 axis_val：
+axis_val.pitch
+axis_val.roll
+axis_val.yaw
+
+当前封装读取函数：
+static bmi270_axis_t app_imu_read(void)
+
+当前任务函数：
+static void app_imu_task(void *arg)
+
+当前逻辑：
+app_imu_task() 每 10ms 调用 app_imu_read()，得到 axis_offset，然后根据当前屏幕页面调用：
+app_dice_event(axis_offset)
+app_game_event(axis_offset)
+
+结论：
+现有 IMU 代码已经能读取陀螺仪和加速度，并能计算 pitch / roll / yaw。
+但目前对外使用的是 axis_offset，也就是姿态变化量；而且 app_imu_read() 是 static 函数，只能在 app_imu.c 内部调用。
+
+后续 WebSocket 对接建议：
+如果只是做“是否移动 / 摇晃检测”，可以上传 axis_offset。
+如果要上传当前姿态角，建议新增一个公开函数，例如 app_imu_get_axis()，返回当前 axis_val.pitch / roll / yaw。

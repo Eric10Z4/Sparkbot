@@ -1,0 +1,25 @@
+摄像头抓拍接口已定位：
+
+相关文件：
+example/factory_demo_v1/main/ui/ui.c
+example/factory_demo_v1/components/esp_sparkbot_bsp.h
+
+取图函数：
+camera_fb_t *pic = esp_camera_fb_get();
+
+释放函数：
+esp_camera_fb_return(pic);
+
+当前摄像头配置：
+.pixel_format = PIXFORMAT_RGB565
+.frame_size = FRAMESIZE_240X240
+.fb_count = 2
+.fb_location = CAMERA_FB_IN_PSRAM
+
+结论：
+factory_demo_v1 当前摄像头输出格式是 RGB565，尺寸为 240x240，不是 JPEG。
+后续 WebSocket 上传图片时，建议发送 RGB565 原始数据，并附带 format、width、height 字段。
+如果后续强制要 JPEG，需要修改 pixel_format，但可能影响当前 LVGL 屏幕显示，需要单独测试。
+
+注意：
+使用 pic->buf / pic->len 时，必须先发送或复制数据，再调用 esp_camera_fb_return(pic) 释放帧缓存。
